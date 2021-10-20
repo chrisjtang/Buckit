@@ -50,11 +50,16 @@ const Dashboard = (props) => {
 
 
     const handleSubmit = (event) => {
-        event.preventDefault();
+        console.log('we are consoling the event');
+        document.getElementById('inputField1').value = '';
+        document.getElementById('inputField2').value = '';
+        document.getElementById('inputField3').value = '';
+        document.getElementById('inputField4').value = '0';
         setTitleInput(titleInput);
         setTextInput(textInput);
         setUrlInput(urlInput);
         setRatingInput(ratingInput);
+        event.preventDefault();
         fetchData();
       };
 
@@ -81,27 +86,27 @@ const Dashboard = (props) => {
 
             {/* {buckitList} */}
 
-            <Form onSubmit={handleSubmit}>
-                <Modal show={showBuckit} onHide={handleClose} backdrop="static" keyboard={false} centered>
+            <Form id="buckitForm">
+                <Modal id="buckitModal" show={showBuckit} onHide={handleClose} backdrop="static" keyboard={false} centered>
                     <Modal.Header closeButton>
                         <Modal.Title>New Buckit</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Form.Group controlId="formBasicTitle">
-                            <Form.Control type="text" placeholder="Enter Title"    onChange={(e) => setTitleInput(e.target.value)}
+                            <Form.Control id='inputField1' type="text" placeholder="Enter Title"    onChange={(e) => setTitleInput(e.target.value)}
               value={titleInput}/>
                         </Form.Group>
                         <Form.Group className="mb-2" controlId="formBasicText">
-                            <Form.Control className="mt-2" as="textarea" placeholder="Enter Description" rows={3} onChange={(e) => setTextInput(e.target.value)}
+                            <Form.Control  id='inputField2' className="mt-2" as="textarea" placeholder="Enter Description" rows={3} onChange={(e) => setTextInput(e.target.value)}
               value={textInput}/>
                         </Form.Group>
                         <InputGroup>
-                            <FormControl className="mb-2" size="sm" type="url" aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="Share URL" onChange={(e) => setUrlInput(e.target.value)}
+                            <Form.Control  id='inputField3' className="mb-2" size="sm" type="url" aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="Share URL" onChange={(e) => setUrlInput(e.target.value)}
               value={urlInput}/>
                         </InputGroup>
                         <Row>
                             <Col>
-                                <Form.Select onSelect={(e) => setRatingInput(e.target.value)}>
+                                <Form.Select id="inputField4" onSelect={(e) => setRatingInput(e.target.value)}>
                                     <option value="0">Rating</option>
                                     <option value="3">⭐⭐⭐</option> 
                                     <option value="2">⭐⭐</option>
@@ -114,7 +119,7 @@ const Dashboard = (props) => {
                         </Row>
                     </Modal.Body>
                     <Modal.Footer className="d-grid gap-2">
-                        <Button variant="primary" type='submit'>Confirm</Button>
+                        <Button variant="primary" type='submit' onClick={handleSubmit}>Confirm</Button>
                     </Modal.Footer>
                 </Modal>
             </Form>
