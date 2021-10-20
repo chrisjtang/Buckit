@@ -14,6 +14,7 @@ const Dashboard = (props) => {
     const [urlInput, setUrlInput] = useState('');
     const [ratingInput, setRatingInput] = useState("0");
     const [separator, setSeparator] = useState([]);
+    const [userID, setUserID] = useState('');
     
     const handleClose = () => setShowBuckit(false);
     const handleShow = () => setShowBuckit(true);
@@ -25,6 +26,7 @@ const Dashboard = (props) => {
             console.log('response', res);
             const newSeparator = res.data.map( el => <Separator titleInput={el.title} textInput={el.description} urlInput={el.url} ratingInput={el.rating} />);
             setSeparator(newSeparator);
+            setUserID(res.data[0].user_id);
             console.log('this is our new separator or something:', newSeparator);
         })
         .catch((err) => console.error('ERR: ', err));
@@ -39,9 +41,18 @@ const Dashboard = (props) => {
                 text: textInput,
                 url: urlInput,
                 rating: ratingInput,
+                user_id: userID
             })
-            .then((res) =>  { res.map( el => {<Separator titleInput={el.title} textInput={el.description} urlInput={el.url} ratingInput={el.rating} />})
-        })
+            .then((res) => {
+                console.log('response*******',res);
+                document.getElementById('inputField1').value = '';
+                document.getElementById('inputField2').value = '';
+                document.getElementById('inputField3').value = '';
+                document.getElementById('inputField4').value = '0';
+                // location.reload();
+            })
+        //     .then((res) =>  { res.data.map( el => {<Separator titleInput={el.title} textInput={el.description} urlInput={el.url} ratingInput={el.rating} />})
+        // })
             .catch((err) => console.error('ERR: ', err));
     };
 
@@ -49,18 +60,25 @@ const Dashboard = (props) => {
 
 
 
+    //Revisit this: how do we render a new buckit card without reloading the page? 
     const handleSubmit = (event) => {
-        console.log('we are consoling the event');
-        document.getElementById('inputField1').value = '';
-        document.getElementById('inputField2').value = '';
-        document.getElementById('inputField3').value = '';
-        document.getElementById('inputField4').value = '0';
-        setTitleInput(titleInput);
-        setTextInput(textInput);
-        setUrlInput(urlInput);
-        setRatingInput(ratingInput);
-        event.preventDefault();
+        // console.log('we are consoling the event');
         fetchData();
+
+        const buckit = {
+            title: titleInput,
+            text: textInput,
+            url: urlInput,
+            rating: ratingInput,
+            user_id: userID
+        }
+
+        const newSeparator = separator.push(buckit);
+        setSeparator(newSeparator);
+        setShowBuckit(false);
+        location.reload();
+        event.preventDefault();
+
       };
 
 
@@ -92,11 +110,12 @@ const Dashboard = (props) => {
                         <Modal.Title>New Buckit</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <Form.Group controlId="formBasicTitle">
+                        {/* <Form.Group controlId="formBasicTitle"> */}
+                        <Form.Group>
                             <Form.Control id='inputField1' type="text" placeholder="Enter Title"    onChange={(e) => setTitleInput(e.target.value)}
               value={titleInput}/>
                         </Form.Group>
-                        <Form.Group className="mb-2" controlId="formBasicText">
+                        <Form.Group className="mb-2">
                             <Form.Control  id='inputField2' className="mt-2" as="textarea" placeholder="Enter Description" rows={3} onChange={(e) => setTextInput(e.target.value)}
               value={textInput}/>
                         </Form.Group>
