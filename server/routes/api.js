@@ -17,7 +17,7 @@ router.get('/home/:username', apiController.getBuckitList,
 router.post('/signup', apiController.createUser);
 
 router.post('/addBuckit', apiController.createBuckit, (req, res) => {
-    return res.json(res.locals.body);
+    return res.status(203).json(res.locals.body);
 });
 
 
