@@ -14,6 +14,8 @@ router.get('/home/:username', apiController.getBuckitList,
     }
 );
 
+
+
 router.post('/signup', apiController.createUser);
 
 router.post('/addBuckit', apiController.createBuckit, (req, res) => {
