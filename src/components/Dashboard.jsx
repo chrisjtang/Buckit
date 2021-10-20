@@ -13,22 +13,26 @@ const Dashboard = (props) => {
     const [textInput, setTextInput] = useState('');
     const [urlInput, setUrlInput] = useState('');
     const [ratingInput, setRatingInput] = useState("0");
-    const Sep = [] ;
+    const [separator, setSeparator] = useState([]);
     
-    
-
     const handleClose = () => setShowBuckit(false);
     const handleShow = () => setShowBuckit(true);
 
     // useEffect to send GET request to /api/home to render and load all buckit cards
-
+    //you can give the useEffect a dependency, like shown on line 31
     useEffect(() => {
-        axios.get(`/api/home/${props.username}`).then((res) => res.map(<Separator titleInput={el.titleInput} textInput={el.textInput} urlInput={el.urlInput} ratingInput={el.ratingInput} />))
+        axios.get(`/api/home/${props.userName}`).then((res) => {
+            console.log('response', res);
+            const newSeparator = res.data.map( el => <Separator titleInput={el.title} textInput={el.description} urlInput={el.url} ratingInput={el.rating} />);
+            setSeparator(newSeparator);
+            console.log('this is our new separator or something:', newSeparator);
+        })
         .catch((err) => console.error('ERR: ', err));
-    })
+    }, []);
 
     const fetchData = () => {
 
+        //post request to add a buckit item  to the database
         axios
             .post('/api/addBuckit', {
                 title: titleInput,
@@ -36,8 +40,8 @@ const Dashboard = (props) => {
                 url: urlInput,
                 rating: ratingInput,
             })
-            .then((res) => { res.map((el) => <Separator titleInput={el.titleInput} textInput={el.textInput} urlInput={el.urlInput} ratingInput={el.ratingInput} />);
-            })
+            .then((res) =>  { res.map( el => {<Separator titleInput={el.title} textInput={el.description} urlInput={el.url} ratingInput={el.rating} />})
+        })
             .catch((err) => console.error('ERR: ', err));
     };
 
@@ -58,6 +62,7 @@ const Dashboard = (props) => {
 
 
     return (
+        //Bootstrap(?) Navbar
         <Container fluid className="dashboard border rounded border-dark">
             <Navbar collapseOnSelect className="fixed-top" bg="dark" variant="dark">
                 <Container>
@@ -72,7 +77,7 @@ const Dashboard = (props) => {
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
-            {Sep}
+            <div className = "Container">{separator}</div>
 
             {/* {buckitList} */}
 
@@ -98,7 +103,7 @@ const Dashboard = (props) => {
                             <Col>
                                 <Form.Select onSelect={(e) => setRatingInput(e.target.value)}>
                                     <option value="0">Rating</option>
-                                    <option value="3">⭐⭐⭐</option>
+                                    <option value="3">⭐⭐⭐</option> 
                                     <option value="2">⭐⭐</option>
                                     <option value="1">⭐</option>
                                 </Form.Select>
