@@ -103,6 +103,8 @@ const Dashboard = (props) => {
                             <Col>
                                 <Form.Select onSelect={(e) => setRatingInput(e.target.value)}>
                                     <option value="0">Rating</option>
+                                    <option value="5">⭐⭐⭐⭐⭐</option> 
+                                    <option value="4">⭐⭐⭐⭐</option> 
                                     <option value="3">⭐⭐⭐</option> 
                                     <option value="2">⭐⭐</option>
                                     <option value="1">⭐</option>
