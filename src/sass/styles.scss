@@ -23,6 +23,11 @@
 
 }
 
+.rating {
+  color: black;
+  display: flex;
+  justify-content: end;
+}
 .list-group-item {
   padding: 0;
 }
@@ -44,13 +49,18 @@ hr.solid {
 }
 
 .separator {
-  margin-top: 65px;
+  margin-top: 80px;
   margin-left: 10px;
-  height: 100%;
+  width: 100%;
+  height: auto;
+  margin-right: 10px;
+  size: 40%;
+  max-width: 500px;
 }
 
+
 .Container {
-  display: block;
+  display: flex;
   }
 
 

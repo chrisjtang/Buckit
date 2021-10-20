@@ -4,16 +4,15 @@ import { BrowserRouter as Router, Route, Switch, NavLink, Link } from 'react-rou
 import { Button, Form, Container, Image, Row, Column, Col, Card, ListGroup, ListGroupItem, InputGroup, FormControl, CloseButton, Modal } from 'react-bootstrap';
 
 const Buckit = (props) => {
+    console.log('props', props);
 
     return (
         <Card variant="Light" border="primary" style={{ width: '18rem' }}>
-            <div className="d-flex justify-content-end">{props.ratingInput}</div>
+            <h4 className="rating">{props.ratingInput}⭐</h4> 
             <Card.Body>
-                <Card.Title>{props.titleInput} </Card.Title>
+                <Card.Title style={{color: "black"}}>{props.titleInput}</Card.Title>
                 <hr className="solid" />
-                <Card.Text>{props.urlInput}</Card.Text>
-            </Card.Body>
-            <Card.Body>
+                <Card.Text style={{color: "black"}}>{props.textInput}</Card.Text>
                 <Card.Link href={props.urlInput}>{props.urlInput}</Card.Link>
             </Card.Body>
         </Card>
@@ -22,3 +21,5 @@ const Buckit = (props) => {
 };
 
 export default Buckit;
+//d-flex justify-content-end <== line 11. what the fuck are yoU/
+//Tim sin iq is so fucking high
