@@ -8,29 +8,50 @@ import logo from '../img/buckitimg.png'
 const Login = () => {
     const [usernameInput, setUsername] = useState('');
     const [passwordInput, setPassword] = useState('');
+    const [loginVerify, setloginVerify] = useState(false);
 
     //currently, there is no route to handle the /api/login endpoint
     const fetchData = () => {
         axios
-            .post('/api/login', {
-                username: usernameInput,
-                password: passwordInput,
+        // needs to be a post request so that axios can send request body in the config object's data property.
+            .post('/api/login/', {
+                data: {
+                    username: usernameInput,
+                    password: passwordInput,
+                }
             })
-            .then((res) => console.log(res))
-            .then((data) => console.log('DATA: ', data))
+            .then((res) => {
+              if (res.status === 204) {
+                setloginVerify(e => e = true)
+                return <Link to={{ pathname: '/home',
+                state: {username: usernameInput},
+              }}/>
+                // window.location = `/home/${usernameInput}`;
+              }
+              if (res.status === 205) {
+                  console.log('Invalid username/password');
+              }
+            })
+            // .then((data) => console.log('DATA: ', data))
+            // this.state.loginVerify = true;
+            // if (this.state.loginVerify === true) {return (<Redirect to ="/home" />)};
             .catch((err) => console.error('ERR: ', err));
+
+            
     };
 
-    const handleSubmit = (event) => {
+    
+
+    const handleLogin = () => {
         event.preventDefault();
         fetchData();
-    };
-
+    }
+    // if (res.locals.userVerified === true) {return (<Redirect to ="/home" />)}
     return (
         <Container fluid className="login">
             <div className="loginCard">
             <Image src={logo} fluid />
-                <Form onSubmit={handleSubmit}>
+                <Form>
                     <Form.Group className="mb-3" controlId="formBasicUsername">
                         <Form.Label>Username</Form.Label>
                         <Form.Control type="text" placeholder="Enter Username *" onChange={(e) => setUsername(e.target.value)} value={usernameInput} />
@@ -41,7 +62,7 @@ const Login = () => {
                     </Form.Group>
                     <Row>
                         <Col>
-                            <Button className="mb-2 pull-right" variant="primary" type="submit">
+                            <Button className="mb-2 pull-right" variant="primary" type="submit" onClick={handleLogin}>
                                 Sign In
                             </Button>
                         </Col>

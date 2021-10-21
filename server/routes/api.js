@@ -24,12 +24,22 @@ router.patch('/home/:username', apiController.updateBuckitList, (req, res) => {
 
 //on successful login, we verify if the credentials are legit, and then redirect to the home/:username
 //unsuccessful login, refresh the page
-router.get('/login', apiController.verifyUser, (req, res) => {
+router.post('/login', apiController.verifyUser, (req, res) => {
     const username = res.locals.userInfo[0].username;
-    console.log('user verified', username);
-    if (res.locals.userInfo) res.redirect(`/home/`)
-    return res.status(204).json(res.locals.userInfo)
+    if (res.locals.userInfo) {
+        // on success, we send status of 204 so the frontend knows to let the user into the dashboard
+        return res.redirect(`/home/${username}`)
+        // return res.sendStatus(204);
+    } else {
+        // on fail, we send status of 205
+        return res.sendStatus(205);
+    }
+    // console.log('res.locals', res.locals)
+    // console.log('user verified', username);
+    // // if (res.locals.userInfo) res.redirect(`/home/${username}`)
+    // return res.status(204).json(res.locals);
 });
+
 
 //On successful signup, we want users redirected to the login page
 router.post('/signup', apiController.createUser, (req, res) => {
@@ -37,6 +47,7 @@ router.post('/signup', apiController.createUser, (req, res) => {
     //res.redirect(localhost:8080/login)
     return res.status(202).json(res.locals.createdUser.user_id)
 });
+
 
 router.post('/addBuckit', apiController.createBuckit, (req, res) => {
     return res.status(203).json(res.locals.body);

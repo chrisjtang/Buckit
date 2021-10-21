@@ -11,14 +11,16 @@ down the middleware chain by invoking next(). The final middleware in the router
 is then responsible for sending the data back to the front-end 
 */
 apiController.verifyUser = (req, res, next) => {
-  const { username, password } = req.body;
+  console.log('Made it to inside verifyUser middleware');
+  console.log('requestbody******', req.body);
+  const { username, password } = req.body.data;
   const getUser = `SELECT * FROM users WHERE password='${password}' AND username = '${username}'`;
 
   db.query(getUser)
   .then((data) => {
     //sql values is in key: rows
     const userAccData = [...data.rows]; 
-    // console.log('getUser data: ', userAccData);
+    console.log('getUser data: ', userAccData);
     if (userAccData[0]) {
       res.locals.userInfo = userAccData;
       return next()
