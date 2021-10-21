@@ -18,7 +18,7 @@ const Signup = () => {
       })
       //this is a really weird line under for line 20. wtf.
       .then(() => {
-        window.location = '/'
+        window.location = '/';
       })
       .catch(err => console.error('ERR: ', err));
   };
@@ -54,8 +54,8 @@ const Signup = () => {
           </Form.Group>
           <Form.Group className="d-grid gap-2">
           <Link to={{ pathname: '/home',
-                state: {username: usernameInput}}} >
-            <Button variant="primary" type="submit" onClick={handleSubmit}>
+                state: {username: usernameInput}}}>
+            <Button variant="primary" type="submit">
               Confirm
             </Button>
             </Link>
