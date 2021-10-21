@@ -32,10 +32,12 @@ router.get('/login', apiController.verifyUser, (req, res) => {
 });
 
 //On successful signup, we want users redirected to the login page
-router.post('/signup', apiController.createUser, (req, res) => {
+router.post('/signup', apiController.checkUnique, apiController.addUser, (req, res) => {
     //on successful sign up, redirect to the login page
-    //res.redirect(localhost:8080/login)
-    return res.status(202).json(res.locals.createdUser.user_id)
+    // console.log('I made it to the middleware mom!');
+    res.sendStatus(205);
+    // res.redirect('http://localhost:8080/');
+    // return res.status(202).json(res.locals.createdUser.user_id)
 });
 
 router.post('/addBuckit', apiController.createBuckit, (req, res) => {

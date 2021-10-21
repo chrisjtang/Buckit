@@ -32,45 +32,43 @@ apiController.verifyUser = (req, res, next) => {
 });
 }
 
-apiController.createUser = (req, res, next) => {
-  const { username, password } = req.body; 
+apiController.checkUnique = (req, res, next) => {
+  const { username } = req.body; 
 
-  // SELECT buckits.*, users.username as username FROM buckits LEFT OUTER JOIN users ON users.user_id = buckits.user_id
   const getUser = `SELECT * FROM users WHERE username='${username}';`;
-
+ 
+  res.locals.newUser = req.body;
+  
   db.query(getUser)
     .then((data) => {
-      //sql values is in key: rows
-      const userAccData = [...data.rows]; 
-      // console.log('getUser data: ', userAccData);
-      if (!userAccData[0]) return addNewUser();
-      else return next({err: 'username already exists'});
-      // return res.status(200).json(userAccData);
+      const userAccData = data.rows;
+
+      if (!userAccData[0]) return next();
+
+      else next({err: 'username already exists'});
+      
     })
     .catch((err) => {
-      // console.log('getUser error: ', err);
+      console.log('getUser error: ', err);
       return next(err);
-  });
+  }); 
+};
 
-  const addNewUser = () => {
-    const addUser = `INSERT INTO users VALUES ('${userId}', '${username}', '${password}');`;
+apiController.addUser = (req, res, next) => {
+  const { userId, username, password } = res.locals.newUser;
+
+  const addUser = `INSERT INTO users VALUES ('${userId}', '${username}', '${password}');`;
 
     db.query(addUser)
-      .then((data) => {
-        const newUserData = [...data.rows];
-        // console.log('addUser data: ', newUserData);
-        res.locals.userId = newUserData[0].user_id;
+      .then(() => {
         return next();
       })
       .catch((err) => {
-        // console.log('addUser error: ', err);
+        console.log('addUser error: ', err);
         return next(err);
       });
-  };
-};
+}
 
-// We would essentially want one buckit_list table per user
-  // This requires us to join all entries in buckit_list table with the username in users db with req.body.username
 
   //dependent on user login
 apiController.getBuckitList = (req, res, next) => {

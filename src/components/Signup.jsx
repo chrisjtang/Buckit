@@ -17,7 +17,9 @@ const Signup = () => {
         password: passwordInput,
       })
       //this is a really weird line under for line 20. wtf.
-      .then(res => window.location = `/home`)
+      .then(() => {
+        window.location = '/'
+      })
       .catch(err => console.error('ERR: ', err));
   };
 
@@ -30,14 +32,6 @@ const Signup = () => {
     <Container fluid className="login">
       <div className="loginCard">
         <Form onSubmit={handleSubmit}>
-          <Form.Label>Enter Email<span class="text-danger"> *</span></Form.Label>
-          <Form.Group className="mb-3">
-            <Form.Control
-              className="form-control"
-              type="email"
-              placeholder="example@gmail.com"
-            />
-          </Form.Group>
           <Form.Label>Create Username<span class="text-danger"> *</span></Form.Label>
           <Form.Group className="mb-3">
             <Form.Control
@@ -61,7 +55,7 @@ const Signup = () => {
           <Form.Group className="d-grid gap-2">
           <Link to={{ pathname: '/home',
                 state: {username: usernameInput}}} >
-            <Button variant="primary" type="submit">
+            <Button variant="primary" type="submit" onClick={handleSubmit}>
               Confirm
             </Button>
             </Link>
