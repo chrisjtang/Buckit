@@ -22,7 +22,21 @@ router.patch('/home/:username', apiController.updateBuckitList, (req, res) => {
     return res.status(202).json(res.locals.updatedBuckit)
 });
 
-router.post('/signup', apiController.createUser);
+//on successful login, we verify if the credentials are legit, and then redirect to the home/:username
+//unsuccessful login, refresh the page
+router.get('/login', apiController.verifyUser, (req, res) => {
+    const username = res.locals.userInfo[0].username;
+    console.log('user verified', username);
+    if (res.locals.userInfo) res.redirect(`/home/`)
+    return res.status(204).json(res.locals.userInfo)
+});
+
+//On successful signup, we want users redirected to the login page
+router.post('/signup', apiController.createUser, (req, res) => {
+    //on successful sign up, redirect to the login page
+    //res.redirect(localhost:8080/login)
+    return res.status(202).json(res.locals.createdUser.user_id)
+});
 
 router.post('/addBuckit', apiController.createBuckit, (req, res) => {
     return res.status(203).json(res.locals.body);

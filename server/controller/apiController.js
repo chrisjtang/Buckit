@@ -10,9 +10,30 @@ we need to store the relevant data in our res.locals, and pass it
 down the middleware chain by invoking next(). The final middleware in the router
 is then responsible for sending the data back to the front-end 
 */
+apiController.verifyUser = (req, res, next) => {
+  const { username, password } = req.body;
+  const getUser = `SELECT * FROM users WHERE password='${password}' AND username = '${username}'`;
+
+  db.query(getUser)
+  .then((data) => {
+    //sql values is in key: rows
+    const userAccData = [...data.rows]; 
+    // console.log('getUser data: ', userAccData);
+    if (userAccData[0]) {
+      res.locals.userInfo = userAccData;
+      return next()
+    }
+    return next();
+    // return res.status(200).json(userAccData);
+  })
+  .catch((err) => {
+    // console.log('getUser error: ', err);
+    return next(err);
+});
+}
 
 apiController.createUser = (req, res, next) => {
-  const { userId, username, password } = req.body; 
+  const { username, password } = req.body; 
 
   // SELECT buckits.*, users.username as username FROM buckits LEFT OUTER JOIN users ON users.user_id = buckits.user_id
   const getUser = `SELECT * FROM users WHERE username='${username}';`;
@@ -23,12 +44,13 @@ apiController.createUser = (req, res, next) => {
       const userAccData = [...data.rows]; 
       // console.log('getUser data: ', userAccData);
       if (!userAccData[0]) return addNewUser();
-      return res.status(200).json(userAccData);
+      else return next({err: 'username already exists'});
+      // return res.status(200).json(userAccData);
     })
     .catch((err) => {
       // console.log('getUser error: ', err);
       return next(err);
-    });
+  });
 
   const addNewUser = () => {
     const addUser = `INSERT INTO users VALUES ('${userId}', '${username}', '${password}');`;
@@ -37,7 +59,8 @@ apiController.createUser = (req, res, next) => {
       .then((data) => {
         const newUserData = [...data.rows];
         // console.log('addUser data: ', newUserData);
-        return res.status(200).json(newUserData);
+        res.locals.userId = newUserData[0].user_id;
+        return next();
       })
       .catch((err) => {
         // console.log('addUser error: ', err);
@@ -142,6 +165,7 @@ apiController.updateBuckitList = (req, res, next) => {
 
 apiController.deleteBuckitList = (req, res, next) => {
   const id = req.body.buckit_id;
+  console.log('id*******', req.body);
   const deleteQuery = `DELETE FROM buckits WHERE buckit_id = '${id}'`;
   
   db.query(deleteQuery) 

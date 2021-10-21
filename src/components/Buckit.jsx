@@ -20,8 +20,13 @@ const Buckit = (props) => {
     //function to send delete call to the server
     const deleteBuckit = () => {
         console.log('clicked the delete button')
-        axios.delete(`/home/:${props.username}`, {
-            buckit_id: props.buckitId
+        console.log('PROPS+BUCKITID******',props.buckitId);
+        axios.delete(`api/home/${props.username}`, {
+            headers: {
+            },
+            data: {
+                buckit_id: props.buckitId
+            }
         })
         .then(() => {
             location.reload();
@@ -33,7 +38,7 @@ const Buckit = (props) => {
 
     const editBuckit = () => {
         handleClose();
-        axios.patch('/home/:username', {
+        axios.patch(`api/home/${props.username}`, {
             title: titleInput,
             text: textInput,
             url: urlInput,
@@ -84,7 +89,7 @@ const Buckit = (props) => {
                         </InputGroup>
                         <Row>
                             <Col>
-                                <Form.Select id="editField4" onSelect={(e) => setRatingInput(e.target.value)}>
+                                <Form.Select id="editField4" onChange={(e) => setRatingInput(e.target.value)}>
                                     <option value="0">Rating</option>
                                     <option value="5">⭐⭐⭐⭐⭐</option> 
                                     <option value="4">⭐⭐⭐⭐</option> 

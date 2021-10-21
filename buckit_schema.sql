@@ -1,7 +1,7 @@
 -- i think user_id in users should be SERIAL so that SQL will make it unique automatically--
 
 CREATE TABLE users (
-  user_id varchar NOT NULL,
+  user_id SERIAL NOT NULL,
   username varchar NOT NULL,
   password varchar NOT NULL,
   PRIMARY KEY (user_id)

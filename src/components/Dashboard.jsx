@@ -14,7 +14,7 @@ const Dashboard = (props) => {
     const [urlInput, setUrlInput] = useState('');
     const [ratingInput, setRatingInput] = useState("0");
     const [separator, setSeparator] = useState([]);
-    const [userID, setUserID] = useState('');
+    const [userID, setUserID] = useState('testuserID');
     
     const handleClose = () => setShowBuckit(false);
     const handleShow = () => setShowBuckit(true);
@@ -91,11 +91,11 @@ const Dashboard = (props) => {
 
     return (
         //Bootstrap(?) Navbar
+      <Container className = "bigger-wrapper">
         <Container fluid className="dashboard border rounded border-dark">
             <Navbar collapseOnSelect className="fixed-top" bg="dark" variant="dark">
                 <Container>
                     <Navbar.Brand href="/home">Buckit</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                     <Navbar.Collapse id="responsive-navbar-nav">
                         <Nav className="me-auto">
                             <Button variant="secondary" onClick={() => handleShow(true)}>
@@ -105,6 +105,7 @@ const Dashboard = (props) => {
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
+          </Container>
             <div className = "Container">{separator}</div>
 
             {/* {buckitList} */}
