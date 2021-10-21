@@ -60,10 +60,20 @@ hr.solid {
 
 
 .Container {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 
 
+#cardBtn {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+
+  button {
+    margin: 2px;
+  }
+}
 // X-Small devices (portrait phones, less than 576px)
 // No media query for `xs` since this is the default in Bootstrap
 

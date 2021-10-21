@@ -24,10 +24,18 @@ const Dashboard = (props) => {
     useEffect(() => {
         axios.get(`/api/home/${props.userName}`).then((res) => {
             console.log('response', res);
-            const newSeparator = res.data.map( el => <Separator titleInput={el.title} textInput={el.description} urlInput={el.url} ratingInput={el.rating} />);
+            const newSeparator = res.data.map( el => <Separator 
+                username={props.userName}
+                userId={el.user_id}
+                buckitId ={el.buckit_id} 
+                titleInput={el.title} 
+                textInput={el.description} 
+                urlInput={el.url} 
+                ratingInput={el.rating}
+                />);
             setSeparator(newSeparator);
             setUserID(res.data[0].user_id);
-            console.log('this is our new separator or something:', newSeparator);
+            // console.log('this is our new separator:', newSeparator)
         })
         .catch((err) => console.error('ERR: ', err));
     }, []);
@@ -81,9 +89,6 @@ const Dashboard = (props) => {
 
       };
 
-
-
-
     return (
         //Bootstrap(?) Navbar
         <Container fluid className="dashboard border rounded border-dark">
@@ -110,7 +115,6 @@ const Dashboard = (props) => {
                         <Modal.Title>New Buckit</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        {/* <Form.Group controlId="formBasicTitle"> */}
                         <Form.Group>
                             <Form.Control id='inputField1' type="text" placeholder="Enter Title"    onChange={(e) => setTitleInput(e.target.value)}
               value={titleInput}/>
