@@ -13,7 +13,7 @@ describe('Route integration', () => {
             return request(server)
               .get('/')
               .expect('Content-Type', /text\/html/)
-              .expect(404);
+              .expect(200);
               console.log('yup');
           });
         });
