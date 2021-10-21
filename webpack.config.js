@@ -12,7 +12,7 @@ module.exports = {
     path: path.resolve(__dirname, "public"),
   },
 
-  module: {
+  module: { 
     rules: [
       {
         loader: "babel-loader",

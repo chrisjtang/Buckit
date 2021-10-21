@@ -38,7 +38,7 @@ const Dashboard = (props) => {
         axios
             .post('/api/addBuckit', {
                 title: titleInput,
-                text: textInput,
+                description: textInput,
                 url: urlInput,
                 rating: ratingInput,
                 user_id: userID
@@ -48,7 +48,7 @@ const Dashboard = (props) => {
                 document.getElementById('inputField1').value = '';
                 document.getElementById('inputField2').value = '';
                 document.getElementById('inputField3').value = '';
-                document.getElementById('inputField4').value = '0';
+                document.getElementById('inputField4').value = "0";
                 // location.reload();
             })
         //     .then((res) =>  { res.data.map( el => {<Separator titleInput={el.title} textInput={el.description} urlInput={el.url} ratingInput={el.rating} />})
@@ -76,7 +76,7 @@ const Dashboard = (props) => {
         const newSeparator = separator.push(buckit);
         setSeparator(newSeparator);
         setShowBuckit(false);
-        location.reload();
+        window.location.reload(false);
         event.preventDefault();
 
       };
@@ -125,7 +125,7 @@ const Dashboard = (props) => {
                         </InputGroup>
                         <Row>
                             <Col>
-                                <Form.Select id="inputField4" onSelect={(e) => setRatingInput(e.target.value)}>
+                                <Form.Select id="inputField4" onChange={(e) => setRatingInput(e.target.value)}>
                                     <option value="0">Rating</option>
                                     <option value="5">⭐⭐⭐⭐⭐</option> 
                                     <option value="4">⭐⭐⭐⭐</option> 

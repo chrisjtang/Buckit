@@ -14,7 +14,13 @@ router.get('/home/:username', apiController.getBuckitList,
     }
 );
 
+router.delete('/home/:username', apiController.deleteBuckitList, (req, res) => {
+    return res.status(202).json(res.locals.deletedBuckit)
+});
 
+router.patch('/home/:username', apiController.updateBuckitList, (req, res) => {
+    return res.status(202).json(res.locals.updatedBuckit)
+});
 
 router.post('/signup', apiController.createUser);
 

@@ -52,7 +52,6 @@ apiController.createUser = (req, res, next) => {
   //dependent on user login
 apiController.getBuckitList = (req, res, next) => {
   const { username } = req.params;
-  console.log('request params*******line55', req.params);
   const getUserId = `SELECT * FROM users WHERE username='${username}';`;
   
   const getUserBuckits = `SELECT buckits.*, users.username as username FROM buckits LEFT OUTER JOIN users ON users.user_id = buckits.user_id WHERE users.username = '${username}'`
@@ -105,18 +104,14 @@ apiController.getBuckitList = (req, res, next) => {
 
 //works
 apiController.createBuckit = (req, res, next) => {
-  const buckItId = uuidv4();
-  console.log('buckit received')
-  console.log('requestbody*********',req.body)
+  const buckitId = uuidv4();
   const { title, description, url, rating, user_id } = req.body;
 // this query might need to be re-written
   const addBuckit =  `INSERT INTO buckits (buckit_id, title, description, url, rating, user_id) \
-    VALUES ('${buckItId}', '${title}', '${description}', '${url}', '${rating}', '${user_id}');`;
+    VALUES ('${buckitId}', '${title}', '${description}', '${url}', '${rating}', '${user_id}');`;
 
   db.query(addBuckit)
     .then(data => {
-      console.log('newBuckit data: ', data);
-      console.log(req.body);
       res.locals.body = req.body;
       return next(); 
     })
@@ -125,5 +120,41 @@ apiController.createBuckit = (req, res, next) => {
       return next(err); 
     }); 
 };
+
+apiController.updateBuckitList = (req, res, next) => {
+  const {buckit_id, title, text, url, rating, user_id} = req.body;
+  const updateQuery = `UPDATE buckits SET title = '${title}', description = '${text}', url = '${url}', rating = '${rating}', user_id = '${user_id}' WHERE buckit_id = '${buckit_id}'`;
+
+  db.query(updateQuery)
+    .then(data => {
+      console.log('I updated everything because I do not know how to update only one');
+      console.log(req.body);
+      res.locals.updatedBuckit = req.body;
+      return next();
+    })
+    .catch((err) => {
+      console.log('updated err', err);
+      return next(err);
+    });
+}
+
+
+
+apiController.deleteBuckitList = (req, res, next) => {
+  const id = req.body.buckit_id;
+  const deleteQuery = `DELETE FROM buckits WHERE buckit_id = '${id}'`;
+  
+  db.query(deleteQuery) 
+    .then(data => {
+      console.log('I think I am deleted');
+      console.log(req.body);
+      res.locals.deletedBuckit = req.body;
+      return next();
+    })
+    .catch((err) => {
+      console.log('delete buckit had an err', err);
+      return next(err);
+    })
+}
 
 module.exports = apiController;
