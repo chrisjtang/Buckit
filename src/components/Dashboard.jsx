@@ -7,6 +7,7 @@ import axios from 'axios';
 
 import Separator from './Separator';
 
+
 const Dashboard = (props) => {
     const [showBuckit, setShowBuckit] = useState(false);
     const [titleInput, setTitleInput] = useState('');
@@ -14,16 +15,25 @@ const Dashboard = (props) => {
     const [urlInput, setUrlInput] = useState('');
     const [ratingInput, setRatingInput] = useState("0");
     const [separator, setSeparator] = useState([]);
-    const [userID, setUserID] = useState('testuserID');
+    const [userID, setUserID] = useState();
     
     const handleClose = () => setShowBuckit(false);
     const handleShow = () => setShowBuckit(true);
+
+    useEffect(() => {
+        axios.get(`api/home/getuserid/${props.userName}`)
+          .then((res) => {
+              console.log('response console log dashboard line 25', res.data);
+              setUserID(res.data)
+          })
+          .catch((err) => console.error('ERR: ', err))
+    }, [])
 
     // useEffect to send GET request to /api/home to render and load all buckit cards
     //you can give the useEffect a dependency, like shown on line 31
     useEffect(() => {
         axios.get(`/api/home/${props.userName}`).then((res) => {
-            console.log('response', res);
+            // console.log('response', res);
             const newSeparator = res.data.map( el => <Separator 
                 username={props.userName}
                 userId={el.user_id}
@@ -34,6 +44,7 @@ const Dashboard = (props) => {
                 ratingInput={el.rating}
                 />);
             setSeparator(newSeparator);
+            // console.log('res.data user_id: ', res.data);
             setUserID(res.data[0].user_id);
             // console.log('this is our new separator:', newSeparator)
         })

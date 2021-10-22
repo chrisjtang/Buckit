@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 //import { Tooltip, Toast, Popover } from 'bootstrap';
-import { Button, Form, Container, Image, Row, Column, Col } from 'react-bootstrap';
+import { Alert, Button, Form, Container, Image, Row, Column, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import logo from '../img/buckitimg.png'
@@ -8,50 +8,56 @@ import logo from '../img/buckitimg.png'
 const Login = () => {
     const [usernameInput, setUsername] = useState('');
     const [passwordInput, setPassword] = useState('');
-    const [loginVerify, setloginVerify] = useState(false);
+    const [userVerified, setUserVerified] = useState();
 
     //currently, there is no route to handle the /api/login endpoint
     const fetchData = () => {
         axios
-        // needs to be a post request so that axios can send request body in the config object's data property.
-            .post('/api/login/', {
-                data: {
-                    username: usernameInput,
-                    password: passwordInput,
-                }
+            .post('/api/login', {
+                username: usernameInput,
+                password: passwordInput,
             })
             .then((res) => {
-              if (res.status === 204) {
-                setloginVerify(e => e = true)
-                return <Link to={{ pathname: '/home',
-                state: {username: usernameInput},
-              }}/>
-                // window.location = `/home/${usernameInput}`;
-              }
-              if (res.status === 205) {
-                  console.log('Invalid username/password');
-              }
+                if (res.status === 204) {
+                    setUserVerified(true);
+                } else {
+                    setUserVerified(false);
+                }
             })
-            // .then((data) => console.log('DATA: ', data))
-            // this.state.loginVerify = true;
-            // if (this.state.loginVerify === true) {return (<Redirect to ="/home" />)};
             .catch((err) => console.error('ERR: ', err));
-
-            
     };
 
-    
-
-    const handleLogin = () => {
+    const handleSubmit = (event) => {
         event.preventDefault();
         fetchData();
+    };
+
+    const secondLogin = () => {
+        if (userVerified === true) {
+            return (
+                <Link to={{ pathname: '/home',
+                state: {username: usernameInput}}} >
+                <Button variant="primary" type="submit">
+                Continue to Dashboard
+                </Button>
+                </Link>
+            )
+        }
+        if (userVerified === false) {
+            console.log('userverified is false: ', userVerified);
+            return (
+                <Alert key="id" variant="primary">
+                Incorrect entry!  Please try again.
+                </Alert>
+            )
+        }
     }
-    // if (res.locals.userVerified === true) {return (<Redirect to ="/home" />)}
+
     return (
         <Container fluid className="login">
             <div className="loginCard">
             <Image src={logo} fluid />
-                <Form>
+                <Form onSubmit={handleSubmit}>
                     <Form.Group className="mb-3" controlId="formBasicUsername">
                         <Form.Label>Username</Form.Label>
                         <Form.Control type="text" placeholder="Enter Username *" onChange={(e) => setUsername(e.target.value)} value={usernameInput} />
@@ -62,10 +68,11 @@ const Login = () => {
                     </Form.Group>
                     <Row>
                         <Col>
-                            <Button className="mb-2 pull-right" variant="primary" type="submit" onClick={handleLogin}>
+                            <Button className="mb-2 pull-right" variant="primary" type="submit" >
                                 Sign In
                             </Button>
                         </Col>
+                        {secondLogin()}
                         <Col></Col>
                         <Col></Col>
                     </Row>
