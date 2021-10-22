@@ -11,22 +11,23 @@ down the middleware chain by invoking next(). The final middleware in the router
 is then responsible for sending the data back to the front-end 
 */
 apiController.verifyUser = (req, res, next) => {
-  console.log('Made it to inside verifyUser middleware');
-  console.log('requestbody******', req.body);
-  const { username, password } = req.body.data;
+  // console.log('Made it to inside verifyUser middleware');
+  // console.log('requestbody******', req.body);
+  const { username, password } = req.body;
   const getUser = `SELECT * FROM users WHERE password='${password}' AND username = '${username}'`;
 
   db.query(getUser)
   .then((data) => {
     //sql values is in key: rows
     const userAccData = [...data.rows]; 
-    console.log('getUser data: ', userAccData);
     if (userAccData[0]) {
       res.locals.userInfo = userAccData;
       return next()
     }
-    return next();
-    // return res.status(200).json(userAccData);
+    if (userAccData.length === 0) {
+      return next();
+      // return res.status(200).json(userAccData);
+    }
   })
   .catch((err) => {
     // console.log('getUser error: ', err);
@@ -56,6 +57,26 @@ apiController.checkUnique = (req, res, next) => {
   }); 
 };
 
+apiController.getUserId = (req, res, next) => {
+  // console.log('request******', req.params)
+  const { username } = req.params; 
+  // console.log('username: ', username)
+  const getUser = `SELECT * FROM users WHERE username='${username}';`;
+
+  res.locals.user = req.body;
+  
+  db.query(getUser)
+    .then((data) => {
+      // console.log('data in line 70 api controller.js', data.rows)
+      
+      // console.log('datarows', data.rows[0].user_id)
+      res.locals.userid = data.rows[0].user_id
+
+      // console.log('USERACCOUNTDATA******', userAccData);
+      return next();
+    })
+}
+
 apiController.addUser = (req, res, next) => {
   const { userId, username, password } = res.locals.newUser;
 
@@ -75,12 +96,12 @@ apiController.addUser = (req, res, next) => {
   //dependent on user login
 apiController.getBuckitList = (req, res, next) => {
   const { username } = req.params;
-  const getUserId = `SELECT * FROM users WHERE username='${username}';`;
   
   const getUserBuckits = `SELECT buckits.*, users.username as username FROM buckits LEFT OUTER JOIN users ON users.user_id = buckits.user_id WHERE users.username = '${username}'`
   
   db.query(getUserBuckits)
     .then(data => {
+      // console.log('data.rows: ', data)
       res.locals.buckits = data.rows;
       return next();
     })
@@ -88,7 +109,7 @@ apiController.getBuckitList = (req, res, next) => {
       console.log(err);
       return next(err);
     })
-
+    
   
 
   /*
