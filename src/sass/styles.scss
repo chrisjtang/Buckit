@@ -4,6 +4,8 @@
   margin: 0;
 }
 
+
+
 .login {
   align-content: center;
 
@@ -23,6 +25,11 @@
 
 }
 
+.rating {
+  color: black;
+  display: flex;
+  justify-content: end;
+}
 .list-group-item {
   padding: 0;
 }
@@ -44,16 +51,32 @@ hr.solid {
 }
 
 .separator {
-  margin-top: 65px;
+  margin-top: 80px;
   margin-left: 10px;
-  height: 100%;
+  width: 100%;
+  height: auto;
+  margin-right: 10px;
+  size: 40%;
+  max-width: 500px;
 }
 
+
 .Container {
-  display: block;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  background: rgb(255, 255, 255);
   }
 
 
+#cardBtn {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+
+  button {
+    margin: 2px;
+  }
+}
 // X-Small devices (portrait phones, less than 576px)
 // No media query for `xs` since this is the default in Bootstrap
 

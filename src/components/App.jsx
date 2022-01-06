@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Route, Switch, NavLink, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, NavLink, Link, useRouteMatch, useParams } from 'react-router-dom';
 
 // Modules
 import 'jquery';

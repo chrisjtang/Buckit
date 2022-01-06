@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 //import { Tooltip, Toast, Popover } from 'bootstrap';
-import { Button, Form, Container, Image, Row, Column, Col } from 'react-bootstrap';
+import { Alert, Button, Form, Container, Image, Row, Column, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import logo from '../img/buckitimg.png'
@@ -8,6 +8,7 @@ import logo from '../img/buckitimg.png'
 const Login = () => {
     const [usernameInput, setUsername] = useState('');
     const [passwordInput, setPassword] = useState('');
+    const [userVerified, setUserVerified] = useState();
 
     //currently, there is no route to handle the /api/login endpoint
     const fetchData = () => {
@@ -16,8 +17,13 @@ const Login = () => {
                 username: usernameInput,
                 password: passwordInput,
             })
-            .then((res) => console.log(res))
-            .then((data) => console.log('DATA: ', data))
+            .then((res) => {
+                if (res.status === 204) {
+                    setUserVerified(true);
+                } else {
+                    setUserVerified(false);
+                }
+            })
             .catch((err) => console.error('ERR: ', err));
     };
 
@@ -25,6 +31,27 @@ const Login = () => {
         event.preventDefault();
         fetchData();
     };
+
+    const secondLogin = () => {
+        if (userVerified === true) {
+            return (
+                <Link to={{ pathname: '/home',
+                state: {username: usernameInput}}} >
+                <Button variant="primary" type="submit">
+                Continue to Dashboard
+                </Button>
+                </Link>
+            )
+        }
+        if (userVerified === false) {
+            console.log('userverified is false: ', userVerified);
+            return (
+                <Alert key="id" variant="primary">
+                Incorrect entry!  Please try again.
+                </Alert>
+            )
+        }
+    }
 
     return (
         <Container fluid className="login">
@@ -41,10 +68,11 @@ const Login = () => {
                     </Form.Group>
                     <Row>
                         <Col>
-                            <Button className="mb-2 pull-right" variant="primary" type="submit">
+                            <Button className="mb-2 pull-right" variant="primary" type="submit" >
                                 Sign In
                             </Button>
                         </Col>
+                        {secondLogin()}
                         <Col></Col>
                         <Col></Col>
                     </Row>
