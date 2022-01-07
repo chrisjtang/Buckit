@@ -38,7 +38,7 @@ router.post('/login', apiController.verifyUser, (req, res) => {
         res.sendStatus(204);
         // return res.sendStatus(204);
     } else {
-        console.log('failure route')
+        console.log('failed login attempt')
         // on fail, we send status of 205
         res.sendStatus(205);
     }
@@ -52,7 +52,6 @@ router.post('/login', apiController.verifyUser, (req, res) => {
 //On successful signup, we want users redirected to the login page
 router.post('/signup', apiController.checkUnique, apiController.addUser, (req, res) => {
     //on successful sign up, redirect to the login page
-    // console.log('I made it to the middleware mom!');
     res.sendStatus(205);
     // res.redirect('http://localhost:8080/');
     // return res.status(202).json(res.locals.createdUser.user_id)
