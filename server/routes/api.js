@@ -6,16 +6,13 @@ const apiController = require('../controller/apiController.js')
 
 // router for get request that grabs the userID from database and returns it to front-end
 router.get('/home/getuserid/:username', apiController.getUserId, (req, res) => {
-    return res.status(200).json(res.locals.userid);
+    return res.status(200).json(`user id is ${res.locals.userid} and username is ${res.locals.user}`);
 });
 
 //endpoint for when a user logs in
-router.get('/home/:username', apiController.getBuckitList,  
-    (req, res) => {
-        // console.log('res.locals****** api.js line 12', res.locals.buckits)
+router.get('/home/:username', apiController.getBuckitList,  (req, res) => {
         return res.status(202).json(res.locals.buckits);
-    }
-);
+});
 
 router.delete('/home/:username', apiController.deleteBuckitList, (req, res) => {
     return res.status(202).json(res.locals.deletedBuckit)

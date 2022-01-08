@@ -73,24 +73,18 @@ apiController.addUser = async (req, res, next) => {
   }
 }
 
-apiController.getUserId = (req, res, next) => {
-  // console.log('request******', req.params)
-  const { username } = req.params; 
+apiController.getUserId = async (req, res, next) => {
+  const { username } = await req.params; 
+  // console.log('get userid middleware request params******', req.params)
   // console.log('username: ', username)
   const getUser = `SELECT * FROM users WHERE username='${username}';`;
 
-  res.locals.user = req.body;
-  
-  db.query(getUser)
-    .then((data) => {
-      // console.log('data in line 70 api controller.js', data.rows)
-      
-      // console.log('datarows', data.rows[0].user_id)
-      res.locals.userid = data.rows[0].user_id
-
-      // console.log('USERACCOUNTDATA******', userAccData);
-      return next();
-    })
+  //pass username to res.locals.user --> why am i doing this?
+  res.locals.user = req.params.username;
+  // run the query
+  const data = await db.query(getUser);
+  res.locals.userid = data.rows[0].user_id;
+  return next();
 }
 
 apiController.getBuckitList = (req, res, next) => {
