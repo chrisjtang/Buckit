@@ -54,7 +54,7 @@ apiController.checkUniqueUser = async (req, res, next) => {
       return next({err: `username ${username} already exists!`});
     }
     } catch (err) {
-      res.status(500).send(`there was an error in ${this}`);
+      res.status(500).send(`error in apiController.checkuniqueuser middleware`);
   }
 };
 
@@ -69,92 +69,87 @@ apiController.addUser = async (req, res, next) => {
     db.query(addUser);
     return next();
   } catch {
-    res.status(500).send(`error in ${this}`);
+    res.status(500).send(`error in apiController.addUser middleware`);
   }
 }
 
 apiController.getUserId = async (req, res, next) => {
-  const { username } = await req.params; 
-  // console.log('get userid middleware request params******', req.params)
-  // console.log('username: ', username)
-  const getUser = `SELECT * FROM users WHERE username='${username}';`;
+  try {
+    //retrieve the username property from the req.params object
+    const { username } = await req.params; 
 
-  //pass username to res.locals.user --> why am i doing this?
-  res.locals.user = req.params.username;
-  // run the query
-  const data = await db.query(getUser);
-  res.locals.userid = data.rows[0].user_id;
-  return next();
+    // write the query
+    const getUser = `SELECT * FROM users WHERE username='${username}';`;
+
+    //pass username to res.locals.user so that it can be returned back to frontend to be used to query buckit items
+    res.locals.user = req.params.username;
+    // run the query
+    const data = await db.query(getUser);
+    // grab the user_id from the array that is returned by the query
+    res.locals.userid = data.rows[0].user_id;
+    return next();
+  } catch {
+    return res.status(400).send(`error in apiController.getUserId middleware`);
+  }
 }
 
-apiController.getBuckitList = (req, res, next) => {
-  const { username } = req.params;
+apiController.getBuckitList = async (req, res, next) => {
+  try {
+    const { username } = await req.params;
+      
+    const getUserBuckits = `SELECT buckits.*, users.username as username FROM buckits LEFT OUTER JOIN users ON users.user_id = buckits.user_id WHERE users.username = '${username}'`
+    
+    const data = await db.query(getUserBuckits);
+    res.locals.buckits = data.rows;
+    return next();
+  } catch {
+    return res.status(400).send(`error in apiController.getBuckitList middleware`);
+  }
   
-  const getUserBuckits = `SELECT buckits.*, users.username as username FROM buckits LEFT OUTER JOIN users ON users.user_id = buckits.user_id WHERE users.username = '${username}'`
-  
-  db.query(getUserBuckits)
-    .then(data => {
-      // console.log('data.rows: ', data)
-      res.locals.buckits = data.rows;
-      return next();
-    })
-    .catch(err => {
-      console.log(err);
-      return next(err);
-    })
 };
 
 
-apiController.createBuckit = (req, res, next) => {
-  const buckitId = uuidv4();
-  const { title, description, url, rating, user_id } = req.body;
-  const addBuckit =  `INSERT INTO buckits (buckit_id, title, description, url, rating, user_id) \
-    VALUES ('${buckitId}', '${title}', '${description}', '${url}', '${rating}', '${user_id}');`;
+apiController.createBuckit = async (req, res, next) => {
+  try {
+    const { title, description, url, rating, user_id } = await req.body;
+    const buckitId = uuidv4();
+    const addBuckit =  `INSERT INTO buckits (buckit_id, title, description, url, rating, user_id) \
+      VALUES ('${buckitId}', '${title}', '${description}', '${url}', '${rating}', '${user_id}');`;
 
-  db.query(addBuckit)
-    .then(data => {
-      res.locals.body = req.body;
-      return next(); 
-    })
-    .catch((err) => {
-      console.log('addBuckit error: ', err);
-      return next(err); 
-    }); 
+    const data = await db.query(addBuckit);
+    res.locals.body = req.body;
+    return next();
+  } catch {
+    return res.status(400).send(`error in the apiController.createBuckit middleware`);
+  }
+  
 };
 
-apiController.updateBuckitList = (req, res, next) => {
-  const {buckit_id, title, text, url, rating, user_id} = req.body;
-  const updateQuery = `UPDATE buckits SET title = '${title}', description = '${text}', url = '${url}', rating = '${rating}', user_id = '${user_id}' WHERE buckit_id = '${buckit_id}'`;
+apiController.updateBuckitList = async (req, res, next) => {
+  try {
+    const {buckit_id, title, text, url, rating, user_id} = await req.body;
+    const updateQuery = `UPDATE buckits SET title = '${title}', description = '${text}', url = '${url}', rating = '${rating}', user_id = '${user_id}' WHERE buckit_id = '${buckit_id}'`;
 
-  db.query(updateQuery)
-    .then(data => {
-      console.log('I updated everything because I do not know how to update only one');
-      console.log(req.body);
-      res.locals.updatedBuckit = req.body;
-      return next();
-    })
-    .catch((err) => {
-      console.log('updated err', err);
-      return next(err);
-    });
+    const data = await db.query(updateQuery);
+    res.locals.updatedBuckit = req.body;
+    return next();
+  } catch {
+    return res.status(400).send(`error in the apiController.updateBuckitList middleware`);
+  }
+  
 }
 
-apiController.deleteBuckitList = (req, res, next) => {
-  const id = req.body.buckit_id;
-  console.log('id*******', req.body);
-  const deleteQuery = `DELETE FROM buckits WHERE buckit_id = '${id}'`;
-  
-  db.query(deleteQuery) 
-    .then(data => {
-      console.log('I think I am deleted');
-      console.log(req.body);
-      res.locals.deletedBuckit = req.body;
-      return next();
-    })
-    .catch((err) => {
-      console.log('delete buckit had an err', err);
-      return next(err);
-    })
+apiController.deleteBuckitList = async (req, res, next) => {
+  try {
+    const id = await req.body.buckit_id;
+    const deleteQuery = `DELETE FROM buckits WHERE buckit_id = '${id}'`;
+    
+    const data = await db.query(deleteQuery);
+    res.locals.deletedBuckit = req.body;
+    return next();
+  } catch {
+    return res.status(400).send(`error in apiController.deleteBuckitList middleware`);
+  }
 }
 
 module.exports = apiController;
