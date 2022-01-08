@@ -50,9 +50,9 @@ router.post('/login', apiController.verifyUser, (req, res) => {
 //when a user tries to sign up, we first check that the username doesn't already exist.
 //if it doesn't exist, then we'll add the user to our database
 //on completion, we should redirect the user to the login page.
-router.post('/signup', apiController.checkUnique, apiController.addUser, (req, res) => {
+router.post('/signup', apiController.checkUniqueUser, apiController.addUser, (req, res) => {
     //on successful sign up, redirect to the login page
-    res.sendStatus(205);
+    res.sendStatus(200).send('successfully added user');
     // res.redirect('http://localhost:8080/');
     // return res.status(202).json(res.locals.createdUser.user_id)
 });

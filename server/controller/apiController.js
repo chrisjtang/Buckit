@@ -6,12 +6,6 @@ const apiController = {};
 
 const bcrypt = require('bcrypt');
 
-/*
-instead of having the middleware function in controller send data back,
-we need to store the relevant data in our res.locals, and pass it 
-down the middleware chain by invoking next(). The final middleware in the router
-is then responsible for sending the data back to the front-end 
-*/
 apiController.verifyUser = async (req, res, next) => {
   try {
     const { username } = req.body;
@@ -20,7 +14,6 @@ apiController.verifyUser = async (req, res, next) => {
 
     db.query(getUser)
       .then((data) => {
-        //sql values is in key: rows
         const userAccData = [...data.rows]; 
         console.log('data', data);
         if (userAccData[0]) {
@@ -29,11 +22,9 @@ apiController.verifyUser = async (req, res, next) => {
         }
         if (userAccData.length === 0) {
           return next();
-          // return res.status(200).json(userAccData);
         }
       })
       .catch((err) => {
-        // console.log('getUser error: ', err);
         return next(err);
       });
   } catch {
@@ -44,7 +35,7 @@ apiController.verifyUser = async (req, res, next) => {
 }
 
 //checkUnique refactored with async/await syntax
-apiController.checkUnique = async (req, res, next) => {
+apiController.checkUniqueUser = async (req, res, next) => {
   try {
     //destructure the req.body object and pull the username from it
     const { username } = req.body;
@@ -67,6 +58,21 @@ apiController.checkUnique = async (req, res, next) => {
   }
 };
 
+apiController.addUser = async (req, res, next) => {
+  try {
+    const hashedPassword = await bcrypt.hash(res.locals.newUser.password, 10);
+    console.log('newUser', res.locals.newUser)
+    const { userId, username } = res.locals.newUser;
+    
+    console.log('hashedpassword', hashedPassword);
+    const addUser = `INSERT INTO users VALUES ('${userId}', '${username}', '${hashedPassword}');`;
+    db.query(addUser);
+    return next();
+  } catch {
+    res.status(500).send(`error in ${this}`);
+  }
+}
+
 apiController.getUserId = (req, res, next) => {
   // console.log('request******', req.params)
   const { username } = req.params; 
@@ -87,28 +93,6 @@ apiController.getUserId = (req, res, next) => {
     })
 }
 
-apiController.addUser = async (req, res, next) => {
-  try {
-    const hashedPassword = await bcrypt.hash(res.locals.newUser.password, 10);
-    const { userId, username } = res.locals.newUser;
-    console.log('hashedpassword', hashedPassword);
-    const addUser = `INSERT INTO users VALUES ('${userId}', '${username}', '${hashedPassword}');`;
-  
-      db.query(addUser)
-        .then(() => {
-          return next();
-        })
-        .catch((err) => {
-          console.log('addUser error: ', err);
-          return next(err);
-        });
-  } catch {
-    res.status(500).send();
-  }
-}
-
-
-  //dependent on user login
 apiController.getBuckitList = (req, res, next) => {
   const { username } = req.params;
   
@@ -160,8 +144,6 @@ apiController.updateBuckitList = (req, res, next) => {
       return next(err);
     });
 }
-
-
 
 apiController.deleteBuckitList = (req, res, next) => {
   const id = req.body.buckit_id;
