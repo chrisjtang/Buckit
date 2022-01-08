@@ -43,26 +43,28 @@ apiController.verifyUser = async (req, res, next) => {
   
 }
 
-apiController.checkUnique = (req, res, next) => {
-  const { username } = req.body; 
-
-  const getUser = `SELECT * FROM users WHERE username='${username}';`;
- 
-  res.locals.newUser = req.body;
-  
-  db.query(getUser)
-    .then((data) => {
-      const userAccData = data.rows;
-
-      if (!userAccData[0]) return next();
-
-      else next({err: 'username already exists'});
-      
-    })
-    .catch((err) => {
-      console.log('getUser error: ', err);
-      return next(err);
-  }); 
+//checkUnique refactored with async/await syntax
+apiController.checkUnique = async (req, res, next) => {
+  try {
+    //destructure the req.body object and pull the username from it
+    const { username } = req.body;
+    //write the sql query with the username passed into it 
+    const getUser = `SELECT * FROM users WHERE username='${username}';`;
+    //data contains the return value of the fulfilled promise from the sql query
+    const data = await db.query(getUser);
+    //if the user doesn't exist, we expect data.rows to be empty
+    if (!data.rows[0]) {
+      //assign the req.body to the res.locals object to pass it to the next middleware
+      res.locals.newUser = req.body;
+      // move onto the next middleware
+      return next();
+    } else {
+      //if the user exists, then we'll return the below error message
+      return next({err: `username ${username} already exists!`});
+    }
+    } catch (err) {
+      res.status(500).send(`there was an error in ${this}`);
+  }
 };
 
 apiController.getUserId = (req, res, next) => {

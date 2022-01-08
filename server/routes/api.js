@@ -8,7 +8,6 @@ const apiController = require('../controller/apiController.js')
 
 // router for get request that grabs the userID from database and returns it to front-end
 router.get('/home/getuserid/:username', apiController.getUserId, (req, res) => {
-    console.log('res.locals*******', res.locals.userid) 
     return res.status(200).json(res.locals.userid);
 });
 
@@ -48,8 +47,9 @@ router.post('/login', apiController.verifyUser, (req, res) => {
     // return res.status(204).json(res.locals);
 });
 
-
-//On successful signup, we want users redirected to the login page
+//when a user tries to sign up, we first check that the username doesn't already exist.
+//if it doesn't exist, then we'll add the user to our database
+//on completion, we should redirect the user to the login page.
 router.post('/signup', apiController.checkUnique, apiController.addUser, (req, res) => {
     //on successful sign up, redirect to the login page
     res.sendStatus(205);
