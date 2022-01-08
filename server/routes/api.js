@@ -2,8 +2,6 @@ const express = require('express');
 
 const router = express.Router();
 
-//we should refactor these to be sending the data back to the front end 
-//these routes are missing final middleware: (req, res) => {res.sendStatus(200)}
 const apiController = require('../controller/apiController.js')
 
 // router for get request that grabs the userID from database and returns it to front-end
