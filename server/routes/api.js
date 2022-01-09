@@ -33,12 +33,8 @@ router.post('/login', apiController.verifyUser, (req, res) => {
     } else {
         console.log('failed login attempt')
         // on fail, we send status of 205
-        res.sendStatus(205);
+        res.sendStatus(205).send(`failure in the post request to /login`);
     }
-    // console.log('res.locals', res.locals)
-    // console.log('user verified', username);
-    // // if (res.locals.userInfo) res.redirect(`/home/${username}`)
-    // return res.status(204).json(res.locals);
 });
 
 //when a user tries to sign up, we first check that the username doesn't already exist.
