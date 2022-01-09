@@ -28,12 +28,12 @@ router.post('/login', apiController.verifyUser, (req, res) => {
     if (res.locals.userInfo) {
         const username = res.locals.userInfo[0].username;
         // on success, we send status of 204 so the frontend knows to let the user into the dashboard
-        res.sendStatus(204);
+        return res.status(204).send(`successful login for username: ${username}`)
         // return res.sendStatus(204);
     } else {
         console.log('failed login attempt')
         // on fail, we send status of 205
-        res.sendStatus(205).send(`failure in the post request to /login`);
+        return res.sendStatus(205).send(`failure in the post request to /login`);
     }
 });
 

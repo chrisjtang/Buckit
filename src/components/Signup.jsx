@@ -16,7 +16,6 @@ const Signup = () => {
         username: usernameInput,
         password: passwordInput,
       })
-      //this is a really weird line under for line 20. wtf.
       .then(() => {
         window.location = '/';
       })
@@ -66,7 +65,5 @@ const Signup = () => {
     </Container>
   );
 };
-
-//userAccountsData = []  //user is not taken & available
 
 export default Signup;

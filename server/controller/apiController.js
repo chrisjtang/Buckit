@@ -11,25 +11,25 @@ apiController.verifyUser = async (req, res, next) => {
     const { username } = req.body;
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const getUser = `SELECT * FROM users WHERE password='${hashedPassword}' AND username = '${username}'`;
-
-    db.query(getUser)
-      .then((data) => {
-        const userAccData = [...data.rows]; 
-        console.log('data', data);
-        if (userAccData[0]) {
-          res.locals.userInfo = userAccData;
-          return next()
-        }
-        if (userAccData.length === 0) {
-          return next();
-        }
-      })
-      .catch((err) => {
-        return next(err);
-      });
-  } catch {
-    res.status(500);
-    next(err);
+    const data = await db.query(getUser);
+    console.log('data from query', data); 
+    const userAccData = [...data.rows]; 
+    console.log('user account data line 16 in api controller verifyuser', userAccData);
+    //if we find a user account with the inputted hashed password and username, then we will expect the userAccData to have an element at index 0.
+    //todo: userAccData is not populating.  it's currently an empty array - 1/8/2021
+    if (userAccData[0]) {
+      // assign the userinfo property array to the res.locals object and go to the next middleware
+      res.locals.userInfo = userAccData;
+      return next()
+    }
+    // if the userAccData array is empty, then we will want to respond with a failure message because that means that the inputted credentials were wrong.  we will use response status 505.
+    // we still want to send a response back because the frontend needs to be able to know what happened
+    if (userAccData.length === 0) {
+      return res.status(505).send(`incorrect credentials, please try again`);
+    }
+  } catch (err) {
+    return res.status(500).send(`error in the apicontroller.verifyuser middleware`)
+    // return next(err);
   }
   
 }
@@ -37,6 +37,7 @@ apiController.verifyUser = async (req, res, next) => {
 //checkUnique refactored with async/await syntax
 apiController.checkUniqueUser = async (req, res, next) => {
   try {
+    console.log('request body', await req.body);
     //destructure the req.body object and pull the username from it
     const { username } = req.body;
     //write the sql query with the username passed into it 
