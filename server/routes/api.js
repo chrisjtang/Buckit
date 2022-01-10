@@ -22,7 +22,6 @@ router.patch('/home/:username', apiController.updateBuckitList, (req, res) => {
     return res.status(202).json(res.locals.updatedBuckit)
 });
 
-
 //on successful login, we verify if the credentials are legit, and then redirect to the home/:username
 router.post('/login', apiController.verifyUser, (req, res) => {
     if (res.locals.userInfo) {
