@@ -9,48 +9,31 @@ const Login = () => {
     const [usernameInput, setUsername] = useState('');
     const [passwordInput, setPassword] = useState('');
     const [userVerified, setUserVerified] = useState();
+    const [showError, setShowError] = useState(false);
+    const [disableSubmit, setDisableSubmit] = useState(true);
 
-    const fetchData = () => {
-        axios
-            .post('/api/login', {
-                username: usernameInput,
-                password: passwordInput,
-            })
-            .then((res) => {
-                if (res.status === 204) {
-                    setUserVerified(true);
-                } else {
-                    setUserVerified(false);
-                }
-            })
-            .catch((err) => console.error('ERR: ', err));
+    const fetchData = async () => {
+        try {
+            const serverRequest = await axios.post('/api/login', {
+            "username": `${usernameInput}`,
+            "password": `${passwordInput}`,
+            });
+            console.log('server request data',serverRequest.status);
+            if (serverRequest.status === 205) {
+                setUserVerified(true);
+                setShowError(false);
+            } else {
+                setUserVerified(false);
+            }
+        } catch {
+            setShowError(true);
+        }
     };
 
     const handleSubmit = (event) => {
         event.preventDefault();
         fetchData();
     };
-
-    const secondLogin = () => {
-        if (userVerified === true) {
-            return (
-                <Link to={{ pathname: '/home',
-                state: {username: usernameInput}}} >
-                <Button variant="primary" type="submit">
-                Continue to Dashboard
-                </Button>
-                </Link>
-            )
-        }
-        if (userVerified === false) {
-            console.log('userverified is false: ', userVerified);
-            return (
-                <Alert key="id" variant="primary">
-                Incorrect entry!  Please try again.
-                </Alert>
-            )
-        }
-    }
 
     return (
         <Container fluid className="login">
@@ -63,22 +46,34 @@ const Login = () => {
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicPassword">
                         <Form.Label>Password</Form.Label>
-                        <Form.Control type="password" placeholder="Enter Password *" onChange={(e) => setPassword(e.target.value)} value={passwordInput} />
+                        <Form.Control type="password" placeholder="Enter Password *" onChange={(e) => {
+                            setPassword(e.target.value);
+                            setDisableSubmit(false);
+                            }} value={passwordInput} />
                     </Form.Group>
                     <Row>
                         <Col>
-                            <Button className="mb-2 pull-right" variant="primary" type="submit" >
+                            <Button className="mb-2 pull-right" variant="primary" type="submit" disabled={disableSubmit}>
                                 Sign In
                             </Button>
                         </Col>
-                        {secondLogin()}
+                            <div className="mt-4">
+                                Don't have an account? <Link to="/signup">Sign Up</Link>
+                            </div>
+                        <Button variant="primary" type="submit" className='login-button' style={{visibility: userVerified ? 'visible' : 'hidden' }} variant="info" type="" >
+                        <Link to={{ pathname: '/home',
+                            state: {username: usernameInput}}} >
+                            Successful login! Click here to enter dashboard.
+                        </Link>
+                        </Button>
                         <Col></Col>
                         <Col></Col>
                     </Row>
-                    <div className="mt-4">
-                        Don't have an account? <Link to="/signup">Sign Up</Link>
-                    </div>
                 </Form>
+                <Alert className='alert' style={{visibility: showError ? 'visible' : 'hidden'}} variant="danger" onClose={() => setShowError(false)} dismissible>
+                <Alert.Heading>Error!</Alert.Heading>
+                 <p>Credentials incorrect.  Please try again.</p>
+      </Alert>
             </div>
         </Container>
     );

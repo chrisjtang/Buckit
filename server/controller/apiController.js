@@ -8,28 +8,26 @@ const bcrypt = require('bcrypt');
 
 apiController.verifyUser = async (req, res, next) => {
   try {
-    const { username } = req.body;
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const getUser = `SELECT * FROM users WHERE password='${hashedPassword}' AND username = '${username}'`;
-    const data = await db.query(getUser);
-    console.log('data from query', data); 
-    const userAccData = [...data.rows]; 
-    console.log('user account data line 16 in api controller verifyuser', userAccData);
-    //if we find a user account with the inputted hashed password and username, then we will expect the userAccData to have an element at index 0.
-    //todo: userAccData is not populating.  it's currently an empty array - 1/8/2021
-    if (userAccData[0]) {
-      // assign the userinfo property array to the res.locals object and go to the next middleware
-      res.locals.userInfo = userAccData;
-      return next()
-    }
-    // if the userAccData array is empty, then we will want to respond with a failure message because that means that the inputted credentials were wrong.  we will use response status 505.
-    // we still want to send a response back because the frontend needs to be able to know what happened
-    if (userAccData.length === 0) {
-      return res.status(505).send(`incorrect credentials, please try again`);
+    const { username, password } = await req.body;
+    //run the query to find the hashed password
+    const getUser = `SELECT * FROM users WHERE username = '${username}'`;
+    const userFromDatabase = await db.query(getUser);
+    //if userfromdatabase is empty, return an error
+    //assign the password from the query result if there's a result
+    if (userFromDatabase.rows.length > 0) {
+      const passwordFromDatabase = userFromDatabase.rows[0].password;
+      //use bcrypt.compare to compare the passwords.  returns boolean.  if true, then go to next middleware.  if false, then send failure message.
+      if (bcrypt.compare(password, passwordFromDatabase)) {
+        res.locals.userInfo = username;
+        return next();
+      } else {
+        return res.send(`incorrect credentials, please try again`);
+      }
+    } else {
+      return next(err);
     }
   } catch (err) {
     return res.status(500).send(`error in the apicontroller.verifyuser middleware`)
-    // return next(err);
   }
   
 }
@@ -62,10 +60,8 @@ apiController.checkUniqueUser = async (req, res, next) => {
 apiController.addUser = async (req, res, next) => {
   try {
     const hashedPassword = await bcrypt.hash(res.locals.newUser.password, 10);
-    console.log('newUser', res.locals.newUser)
     const { userId, username } = res.locals.newUser;
     
-    console.log('hashedpassword', hashedPassword);
     const addUser = `INSERT INTO users VALUES ('${userId}', '${username}', '${hashedPassword}');`;
     db.query(addUser);
     return next();

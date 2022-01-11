@@ -24,16 +24,8 @@ router.patch('/home/:username', apiController.updateBuckitList, (req, res) => {
 
 //on successful login, we verify if the credentials are legit, and then redirect to the home/:username 
 router.post('/login', apiController.verifyUser, (req, res) => {
-    if (res.locals.userInfo) {
-        const username = res.locals.userInfo[0].username;
-        // on success, we send status of 204 so the frontend knows to let the user into the dashboard
-        return res.status(204).send(`successful login for username: ${username}`)
-        // return res.sendStatus(204);
-    } else {
-        console.log('failed login attempt')
-        // on fail, we send status of 205
-        return res.sendStatus(205).send(`failure in the post request to /login`);
-    }
+    // on success, we send status of 204 so the frontend knows to let the user into the dashboard
+    return res.status(205).send(`successful login for ${res.locals.userInfo}`)
 });
 
 //when a user tries to sign up, we first check that the username doesn't already exist.
