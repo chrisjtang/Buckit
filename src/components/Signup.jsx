@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 //import { Tooltip, Toast, Popover } from 'bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
-import { Button, Form, Container, Image, Nav } from 'react-bootstrap';
+import { Alert, Button, Form, Container, Image, Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
@@ -10,10 +10,9 @@ const Signup = () => {
   const [usernameInput, setUsername] = useState('');
   const [passwordInput, setPassword] = useState('');
   const [navigateLogin, setNavigateLogin] = useState(false);
-
-  /*todo:
-  - on successful acct creation, show message and render redirect button to login.
-  */
+  const [showError, setShowError] = useState(false);
+  const [disableSubmit, setDisableSubmit] = useState(true);
+  
   const createAccount = async () => {
     try {
       const apiCall = await axios.post('/api/signup', {
@@ -21,26 +20,26 @@ const Signup = () => {
         "username": `${usernameInput}`,
         "password": `${passwordInput}`,
       });
-      //on successful acct creation, show message and render redirect button to login.  apiCall.status would be 200
-      if (apiCall.status === 200) {
-        console.log('successful status 200');
-      }
+      //on successful acct creation, show message and render redirect button to login.
+      setShowError(false);
+      setNavigateLogin(true);
+      setUsername('');
+      setPassword('');
     } catch {
-      window.alert('Error with your entry.  The username you chose may already be taken.  Please try again.');
+      setShowError(true);
     }
   };
 
   const handleSubmit = (event) => {
-    console.log('submit button clicked');
     event.preventDefault();
     createAccount();
   };
 
-  const loginButton = () => Login;
-
   return (
     <Container fluid className="login">
       <div className="loginCard">
+      <h1>Sign Up Page</h1>
+      <br></br>
         <Form onSubmit={handleSubmit}>
           <Form.Label>Create Username<span class="text-danger"> *</span></Form.Label>
           <Form.Group className="mb-3">
@@ -58,22 +57,29 @@ const Signup = () => {
               className="form-control"
               type="password"
               placeholder="Enter your password"
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setDisableSubmit(false);
+              }}
               value={passwordInput}
             />
           </Form.Group>
           <Form.Group className="d-grid gap-2">
-            <Button variant="primary" type="submit">
+            <Button variant="primary" type="submit" disabled={disableSubmit}>
               Confirm
             </Button>
-            <Button variant="info" type="">
+            <Button className='login-button' style={{visibility: navigateLogin ? 'visible' : 'hidden' }} variant="info" type="">
             <Link to='/login'>
-              Success!  Click here to login
+              Success!  Click here to go to login
             </Link>
             </Button>
           </Form.Group>
           
         </Form>
+      <Alert className='alert' style={{visibility: showError ? 'visible' : 'hidden'}} variant="danger" onClose={() => setShowError(false)} dismissible>
+        <Alert.Heading>Error!</Alert.Heading>
+        <p>Username taken. Please try again with a different username.</p>
+      </Alert>
       </div>
     </Container>
   );
