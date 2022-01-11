@@ -13,8 +13,8 @@ const Login = () => {
     const fetchData = () => {
         axios
             .post('/api/login', {
-                username: usernameInput,
-                password: passwordInput,
+                "username": `${usernameInput}`,
+                "password": `${passwordInput}`,
             })
             .then((res) => {
                 if (res.status === 204) {
