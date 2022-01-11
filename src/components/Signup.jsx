@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 //import { Tooltip, Toast, Popover } from 'bootstrap';
-import { Button, Form, Container, Image } from 'react-bootstrap';
+import {LinkContainer} from 'react-router-bootstrap';
+import { Button, Form, Container, Image, Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
@@ -8,26 +9,34 @@ import { v4 as uuidv4 } from 'uuid';
 const Signup = () => {
   const [usernameInput, setUsername] = useState('');
   const [passwordInput, setPassword] = useState('');
+  const [navigateLogin, setNavigateLogin] = useState(false);
 
-  const fetchData = () => {
-    // console.log('clicked on submit');
-    axios
-      .post('/api/signup', {
+  /*todo:
+  - on successful acct creation, show message and render redirect button to login.
+  */
+  const createAccount = async () => {
+    try {
+      const apiCall = await axios.post('/api/signup', {
         "userId": `${uuidv4()}`,
         "username": `${usernameInput}`,
         "password": `${passwordInput}`,
-      })
-      .then(() => {
-        // window.location = '/';
-      })
-      .catch(err => console.error('ERR: ', err));
+      });
+      //on successful acct creation, show message and render redirect button to login.  apiCall.status would be 200
+      if (apiCall.status === 200) {
+        console.log('successful status 200');
+      }
+    } catch {
+      window.alert('Error with your entry.  The username you chose may already be taken.  Please try again.');
+    }
   };
 
   const handleSubmit = (event) => {
-    console.log('clicked on submit button');
+    console.log('submit button clicked');
     event.preventDefault();
-    fetchData();
+    createAccount();
   };
+
+  const loginButton = () => Login;
 
   return (
     <Container fluid className="login">
@@ -57,9 +66,14 @@ const Signup = () => {
             <Button variant="primary" type="submit">
               Confirm
             </Button>
+            <Button variant="info" type="">
+            <Link to='/login'>
+              Success!  Click here to login
+            </Link>
+            </Button>
           </Form.Group>
+          
         </Form>
-        {Error}
       </div>
     </Container>
   );
