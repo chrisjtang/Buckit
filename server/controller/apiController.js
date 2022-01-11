@@ -23,6 +23,8 @@ apiController.verifyUser = async (req, res, next) => {
       } else {
         return res.send(`incorrect credentials, please try again`);
       }
+    } else {
+      return next(err);
     }
   } catch (err) {
     return res.status(500).send(`error in the apicontroller.verifyuser middleware`)
