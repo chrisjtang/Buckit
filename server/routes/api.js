@@ -2,23 +2,17 @@ const express = require('express');
 
 const router = express.Router();
 
-//we should refactor these to be sending the data back to the front end 
-//these routes are missing final middleware: (req, res) => {res.sendStatus(200)}
 const apiController = require('../controller/apiController.js')
 
 // router for get request that grabs the userID from database and returns it to front-end
 router.get('/home/getuserid/:username', apiController.getUserId, (req, res) => {
-    console.log('res.locals*******', res.locals.userid) 
-    return res.status(200).json(res.locals.userid);
+    return res.status(200).json(`user id is ${res.locals.userid} and username is ${res.locals.user}`);
 });
 
 //endpoint for when a user logs in
-router.get('/home/:username', apiController.getBuckitList,  
-    (req, res) => {
-        // console.log('res.locals****** api.js line 12', res.locals.buckits)
+router.get('/home/:username', apiController.getBuckitList,  (req, res) => {
         return res.status(202).json(res.locals.buckits);
-    }
-);
+});
 
 router.delete('/home/:username', apiController.deleteBuckitList, (req, res) => {
     return res.status(202).json(res.locals.deletedBuckit)
@@ -28,32 +22,26 @@ router.patch('/home/:username', apiController.updateBuckitList, (req, res) => {
     return res.status(202).json(res.locals.updatedBuckit)
 });
 
-
-//on successful login, we verify if the credentials are legit, and then redirect to the home/:username
-//unsuccessful login, refresh the page
+//on successful login, we verify if the credentials are legit, and then redirect to the home/:username 
 router.post('/login', apiController.verifyUser, (req, res) => {
     if (res.locals.userInfo) {
         const username = res.locals.userInfo[0].username;
         // on success, we send status of 204 so the frontend knows to let the user into the dashboard
-        res.sendStatus(204);
+        return res.status(204).send(`successful login for username: ${username}`)
         // return res.sendStatus(204);
     } else {
-        console.log('failure route')
+        console.log('failed login attempt')
         // on fail, we send status of 205
-        res.sendStatus(205);
+        return res.sendStatus(205).send(`failure in the post request to /login`);
     }
-    // console.log('res.locals', res.locals)
-    // console.log('user verified', username);
-    // // if (res.locals.userInfo) res.redirect(`/home/${username}`)
-    // return res.status(204).json(res.locals);
 });
 
-
-//On successful signup, we want users redirected to the login page
-router.post('/signup', apiController.checkUnique, apiController.addUser, (req, res) => {
+//when a user tries to sign up, we first check that the username doesn't already exist.
+//if it doesn't exist, then we'll add the user to our database
+//on completion, we should redirect the user to the login page.
+router.post('/signup', apiController.checkUniqueUser, apiController.addUser, (req, res) => {
     //on successful sign up, redirect to the login page
-    // console.log('I made it to the middleware mom!');
-    res.sendStatus(205);
+    res.status(200).send('successfully added user');
     // res.redirect('http://localhost:8080/');
     // return res.status(202).json(res.locals.createdUser.user_id)
 });

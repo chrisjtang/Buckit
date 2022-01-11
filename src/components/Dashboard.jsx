@@ -75,13 +75,7 @@ const Dashboard = (props) => {
             .catch((err) => console.error('ERR: ', err));
     };
 
-                
-
-
-
-    //Revisit this: how do we render a new buckit card without reloading the page? 
     const handleSubmit = (event) => {
-        // console.log('we are consoling the event');
         fetchData();
 
         const buckit = {
