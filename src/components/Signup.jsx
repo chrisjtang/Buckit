@@ -68,7 +68,7 @@ const Signup = () => {
             <Button variant="primary" type="submit" disabled={disableSubmit}>
               Confirm
             </Button>
-            <Button className='login-button' style={{visibility: navigateLogin ? 'visible' : 'hidden' }} variant="info" type="" disabled>
+            <Button className='login-button' style={{visibility: navigateLogin ? 'visible' : 'hidden' }} variant="info" type="" disabled={disableSubmit}>
             <Link to={{ pathname: '/login'}}>
               Account created!  Click here to go to login.
             </Link>

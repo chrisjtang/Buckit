@@ -32,10 +32,7 @@ router.post('/login', apiController.verifyUser, (req, res) => {
 //if it doesn't exist, then we'll add the user to our database
 //on completion, we should redirect the user to the login page.
 router.post('/signup', apiController.checkUniqueUser, apiController.addUser, (req, res) => {
-    //on successful sign up, redirect to the login page
     res.status(200).send('successfully added user');
-    // res.redirect('http://localhost:8080/');
-    // return res.status(202).json(res.locals.createdUser.user_id)
 });
 
 
