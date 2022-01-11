@@ -10,19 +10,21 @@ const Signup = () => {
   const [passwordInput, setPassword] = useState('');
 
   const fetchData = () => {
+    // console.log('clicked on submit');
     axios
       .post('/api/signup', {
-        userId: uuidv4(),
-        username: usernameInput,
-        password: passwordInput,
+        "userId": `${uuidv4()}`,
+        "username": `${usernameInput}`,
+        "password": `${passwordInput}`,
       })
       .then(() => {
-        window.location = '/';
+        // window.location = '/';
       })
       .catch(err => console.error('ERR: ', err));
   };
 
   const handleSubmit = (event) => {
+    console.log('clicked on submit button');
     event.preventDefault();
     fetchData();
   };
@@ -52,12 +54,9 @@ const Signup = () => {
             />
           </Form.Group>
           <Form.Group className="d-grid gap-2">
-          <Link to={{ pathname: '/home',
-                state: {username: usernameInput}}}>
             <Button variant="primary" type="submit">
               Confirm
             </Button>
-            </Link>
           </Form.Group>
         </Form>
         {Error}
