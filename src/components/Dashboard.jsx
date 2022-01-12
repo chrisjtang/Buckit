@@ -30,10 +30,8 @@ const Dashboard = (props) => {
     }, [])
 
     // useEffect to send GET request to /api/home to render and load all buckit cards
-    //you can give the useEffect a dependency, like shown on line 31
     useEffect(() => {
         axios.get(`/api/home/${props.userName}`).then((res) => {
-            // console.log('response', res);
             const newSeparator = res.data.map( el => <Separator 
                 username={props.userName}
                 userId={el.user_id}
@@ -44,15 +42,12 @@ const Dashboard = (props) => {
                 ratingInput={el.rating}
                 />);
             setSeparator(newSeparator);
-            // console.log('res.data user_id: ', res.data);
             setUserID(res.data[0].user_id);
-            // console.log('this is our new separator:', newSeparator)
         })
         .catch((err) => console.error('ERR: ', err));
     }, []);
 
     const fetchData = () => {
-
         //post request to add a buckit item  to the database
         axios
             .post('/api/addBuckit', {
@@ -68,10 +63,7 @@ const Dashboard = (props) => {
                 document.getElementById('inputField2').value = '';
                 document.getElementById('inputField3').value = '';
                 document.getElementById('inputField4').value = "0";
-                // location.reload();
             })
-        //     .then((res) =>  { res.data.map( el => {<Separator titleInput={el.title} textInput={el.description} urlInput={el.url} ratingInput={el.rating} />})
-        // })
             .catch((err) => console.error('ERR: ', err));
     };
 
@@ -95,7 +87,6 @@ const Dashboard = (props) => {
       };
 
     return (
-        //Bootstrap(?) Navbar
       <Container className = "bigger-wrapper">
         <Container fluid className="dashboard border rounded border-dark">
             <Navbar collapseOnSelect className="fixed-top" bg="dark" variant="dark">
@@ -112,9 +103,6 @@ const Dashboard = (props) => {
             </Navbar>
           </Container>
             <div className = "Container">{separator}</div>
-
-            {/* {buckitList} */}
-
             <Form id="buckitForm">
                 <Modal id="buckitModal" show={showBuckit} onHide={handleClose} backdrop="static" keyboard={false} centered>
                     <Modal.Header closeButton>

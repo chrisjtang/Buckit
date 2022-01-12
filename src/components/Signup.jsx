@@ -41,12 +41,12 @@ const Signup = () => {
       <h1>Sign Up Page</h1>
       <br></br>
         <Form onSubmit={handleSubmit}>
-          <Form.Label>Create Username<span class="text-danger"> *</span></Form.Label>
+          <Form.Label>Email<span class="text-danger"> *</span></Form.Label>
           <Form.Group className="mb-3">
             <Form.Control
               className="form-control"
               type="username"
-              placeholder="Enter your username"
+              placeholder="Enter your email"
               onChange={(e) => setUsername(e.target.value)}
               value={usernameInput}
             />
@@ -78,7 +78,7 @@ const Signup = () => {
         </Form>
       <Alert className='alert' style={{visibility: showError ? 'visible' : 'hidden'}} variant="danger" onClose={() => setShowError(false)} dismissible>
         <Alert.Heading>Error!</Alert.Heading>
-        <p>Username taken. Please try again with a different username.</p>
+        <p>Email already exists. Please try again with a different email or go to login screen.</p>
       </Alert>
       </div>
     </Container>

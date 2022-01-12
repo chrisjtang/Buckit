@@ -114,6 +114,7 @@ apiController.createBuckit = async (req, res, next) => {
       VALUES ('${buckitId}', '${title}', '${description}', '${url}', '${rating}', '${user_id}');`;
 
     const data = await db.query(addBuckit);
+    console.log('data result:', data);
     res.locals.body = req.body;
     return next();
   } catch {

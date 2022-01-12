@@ -1,7 +1,5 @@
 const express = require('express');
-
 const router = express.Router();
-
 const apiController = require('../controller/apiController.js')
 
 // router for get request that grabs the userID from database and returns it to front-end

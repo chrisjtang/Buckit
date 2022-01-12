@@ -1,6 +1,9 @@
 const path = require('path');
 const express = require('express');
+const session = require('express-session');
 const apiRouter = require('./routes/api.js');
+const passport = require('passport');
+require('../auth');
 
 const app = express();
 
@@ -10,6 +13,37 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
+
+// google oauth session initialization
+app.use(session({ 
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+//google oauth
+app.use('/auth/google', passport.authenticate('google', { scope: ['email', 'profile']}));
+app.get('/google/callback',
+  passport.authenticate('google', {
+    successRedirect: '/auth/success',
+    failureRedirect: '/auth/failure'
+  }));
+
+app.use('/auth/failure', (req, res) => {
+  res.send('failure route for oauth');
+})
+
+app.use('/auth/success', (req, res) => {
+  res.send(`success route. Welcome ${req.user.displayName}!`);
+})
+
+app.use('/logout', (req, res) => {
+  req.logout();
+  req.session.destroy();
+  res.send('Goodbye!');
+})
 
 // Routes to api router 
 app.use('/api', apiRouter); 

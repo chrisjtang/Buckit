@@ -41,8 +41,8 @@ const Login = () => {
             <Image src={logo} fluid />
                 <Form onSubmit={handleSubmit}>
                     <Form.Group className="mb-3" controlId="formBasicUsername">
-                        <Form.Label>Username</Form.Label>
-                        <Form.Control type="text" placeholder="Enter Username *" onChange={(e) => setUsername(e.target.value)} value={usernameInput} />
+                        <Form.Label>Email</Form.Label>
+                        <Form.Control type="text" placeholder="Enter Email *" onChange={(e) => setUsername(e.target.value)} value={usernameInput} />
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicPassword">
                         <Form.Label>Password</Form.Label>
