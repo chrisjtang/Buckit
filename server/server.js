@@ -8,6 +8,7 @@ const session = require('express-session');
 const apiRouter = require('./routes/api.js');
 require('../auth');
 const flash = require('express-flash');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 
@@ -47,7 +48,13 @@ app.post('/login', passport.authenticate('local', {
   failureMessage: true }))
 
 app.use('/success', (req, res) => {
-  res.send(`login success. welcome ${req.user.email}`);
+  const username = req.user.email;
+  const accessToken = jwt.sign(req.user, process.env.ACCESS_TOKEN_SECRET)
+  res.json({ accessToken: accessToken })
+})
+
+app.use('/success/protected', authenticateToken, (req, res) => {
+  res.send(`welcome ${req.user.name}`)
 })
 
 app.use('/failure', (req, res) => {
@@ -92,6 +99,20 @@ function checkNotAuthenticated(req, res, next) {
     return res.redirect('/');
   }
   next();
+}
+
+//jwt authenticate token middleware
+function authenticateToken (req, res, next) {
+  console.log('authenticate token middleware');
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (token == null) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    return next();
+  })
 }
 
 app.listen(PORT, () => console.log(`Server is running on localhost:${PORT}`));;

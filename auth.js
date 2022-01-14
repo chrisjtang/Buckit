@@ -1,11 +1,13 @@
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
 const db = require('./server/models/buckitModels.js');
 const uuid = require('uuid');
 
-//refactor client id and secret to environment variables later
-const GOOGLE_CLIENT_ID = '1079563359320-6h2a0mkpne9c66picv9d3v9vc0200gt9.apps.googleusercontent.com';
-const GOOGLE_CLIENT_SECRET = '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';
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 
 passport.use(new GoogleStrategy({
     clientID:     GOOGLE_CLIENT_ID,
